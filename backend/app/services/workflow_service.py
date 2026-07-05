@@ -112,6 +112,21 @@ class WorkflowService:
             )
             await ReportRepository.create(db, session_id, rep_in)
             
+            # Print Observability Metrics
+            metrics = current_state.get("execution_metrics", {})
+            total_time = sum(metrics.values())
+            logger.info("=" * 40)
+            logger.info("    INSIGHTFORGE AI EXECUTION METRICS    ")
+            logger.info("=" * 40)
+            for node, duration in metrics.items():
+                logger.info(f" - {node.capitalize()}: {duration}s")
+            logger.info("-" * 40)
+            logger.info(f" Total Time: {total_time:.2f}s")
+            logger.info(f" Quality Confidence Score: {quality_score * 100:.0f}%")
+            logger.info(f" Sources Collected: {len(sources)}")
+            logger.info(f" Retries: {current_state.get('retry_count', 0)}")
+            logger.info("=" * 40)
+
             # Set session to completed
             await SessionRepository.update_status(db, session_id, "completed")
             
