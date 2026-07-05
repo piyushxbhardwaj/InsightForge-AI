@@ -48,7 +48,7 @@ export const ResearchForm: React.FC<ResearchFormProps> = ({ onSessionCreated }) 
         setCacheHit(null);
       }
     } catch (err) {
-      logger.error('Failed to check cache:', err);
+      console.error('Failed to check cache:', err);
     }
   };
 

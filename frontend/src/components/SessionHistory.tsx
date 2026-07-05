@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search as SearchIcon, Calendar, CheckCircle2, XCircle, AlertCircle, RefreshCw, Layers } from 'lucide-react';
-import { Session } from '../types';
+import type { Session } from '../types';
 
 interface SessionHistoryProps {
   sessions: Session[];

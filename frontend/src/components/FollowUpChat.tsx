@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, MessageSquare, ShieldAlert, Loader2 } from 'lucide-react';
-import { ChatMessage } from '../types';
+import type { ChatMessage } from '../types';
 import { apiService } from '../services/api';
 
 interface FollowUpChatProps {

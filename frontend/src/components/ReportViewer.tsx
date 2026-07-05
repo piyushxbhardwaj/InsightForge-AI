@@ -13,7 +13,7 @@ import {
   Calendar,
   Compass
 } from 'lucide-react';
-import { Report, Source } from '../types';
+import type { Report, Source } from '../types';
 
 interface ReportViewerProps {
   report: Report;
@@ -225,8 +225,8 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({ report, sources }) =
         )}
 
         {activeTab === 'markdown' && (
-          <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200/60 shadow-sm prose prose-slate max-w-none text-slate-700">
-            <ReactMarkdown className="markdown-content space-y-4">
+          <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200/60 shadow-sm prose prose-slate max-w-none text-slate-700 markdown-content space-y-4">
+            <ReactMarkdown>
               {report.markdown_content}
             </ReactMarkdown>
           </div>
