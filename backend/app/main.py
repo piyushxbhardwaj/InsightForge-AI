@@ -1,17 +1,27 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 from backend.app.core.logging import setup_logging
 from backend.app.config.config import settings
+from backend.app.database.init_db import init_db
 
 # Initialize logging
 logger = setup_logging()
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup actions
+    await init_db()
+    yield
+    # Shutdown actions (none needed currently)
+
 app = FastAPI(
     title="InsightForge AI API",
     description="Production-Grade AI Research Copilot API",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 # CORS Configuration for Frontend integration
