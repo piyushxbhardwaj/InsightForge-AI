@@ -118,20 +118,25 @@ The graph executes with self-healing routing:
 
 ## 📸 Project Walkthrough
 
+### 🎬 Interactive Workflow Demonstration (WebP Recording)
+*The recording below displays the complete, autonomous LangGraph loop, report compilation, and panel views in action:*
+
+![InsightForge AI Demo Walkthrough](assets/InsightForge_AI_Demo.webp)
+
 ### 1. The Research Dashboard
 *Start a new session with form validation and instant SQLite cache hit warning prompts.*
 
-![Dashboard Screenshot Placeholder](https://via.placeholder.com/800x450.png?text=Dashboard+Interactive+Form+and+Cache+Hit+UI)
+![The Research Dashboard](assets/dashboard.png)
 
 ### 2. Real-Time Workflow Stepper
 *Watch LangGraph nodes transition live using FastAPI Server-Sent Events (SSE).*
 
-![Workflow Progress Screenshot Placeholder](https://via.placeholder.com/800x450.png?text=SSE+LangGraph+Live+Node+Stepper+Timeline)
+![Real-Time Workflow Stepper](assets/timeline.png)
 
 ### 3. Report Viewer & Follow-Up Chat
 *Analyze company cards alongside a hallucination-restricted sales copilot chatbot.*
 
-![Report and Chat Workspace Screenshot Placeholder](https://via.placeholder.com/800x450.png?text=Side-by-Side+Structured+Report+Viewer+and+Restricted+Chat)
+![Report Viewer](assets/report.png)
 
 ---
 
