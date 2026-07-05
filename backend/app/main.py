@@ -33,6 +33,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from backend.app.api.sessions import router as sessions_router
+app.include_router(sessions_router)
+
 @app.get("/health", tags=["Health"])
 async def health_check():
     """Health check endpoint to monitor API status."""
