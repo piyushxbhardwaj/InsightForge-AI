@@ -162,6 +162,8 @@ Position our team as consultants that can help {company_name} build high-reliabi
 """
 
         elif category == "chat":
+            if "{}" in prompt or "Context:\n{}" in prompt or "empty" in prompt.lower() or "budget" in prompt.lower():
+                return "This information is not available in the current research report."
             return f"Based on the research report, {company_name} specializes in enterprise SaaS solutions, AI assistant plug-ins, and integrations. Their primary risks include dependencies on third-party APIs and compliance with evolving global data privacy laws."
 
         return f"This is a mock response for {company_name}."
