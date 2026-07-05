@@ -15,9 +15,9 @@
 
 ## 💡 Why This Project?
 
-Sales operations and business development representatives spend an average of **30–45 minutes** manually researching prospect companies before an introductory meeting. This manual pipeline is slow, inconsistent, and takes away from active calling time.
+Sales operations and business development representatives often spend significant time manually researching prospect companies before an introductory meeting. This manual pipeline is slow, inconsistent, and takes away from active calling time.
 
-**InsightForge AI** automates this process end-to-end. By leveraging a **production-grade multi-agent LangGraph workflow**, the application scrapes the web, extracts core products, maps target buyer personas, scores data confidence, generates context-constrained outreach questions, and hosts a follow-up chat, reducing prep time to under **30 seconds**.
+**InsightForge AI** automates this process end-to-end. By leveraging a **production-grade multi-agent LangGraph workflow**, the application scrapes the web, extracts core products, maps target buyer personas, scores data confidence, generates context-constrained outreach questions, and hosts a follow-up chat, streamlining preparation into a matter of seconds.
 
 ---
 
