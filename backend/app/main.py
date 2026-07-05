@@ -36,6 +36,9 @@ app.add_middleware(
 from backend.app.api.sessions import router as sessions_router
 app.include_router(sessions_router)
 
+from backend.app.api.workflow import router as workflow_router
+app.include_router(workflow_router)
+
 @app.get("/health", tags=["Health"])
 async def health_check():
     """Health check endpoint to monitor API status."""
