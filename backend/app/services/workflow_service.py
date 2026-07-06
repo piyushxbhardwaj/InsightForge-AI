@@ -141,15 +141,28 @@ class WorkflowService:
 
         except Exception as e:
             logger.error(f"[WorkflowService] Critical error executing graph: {e}")
-            await SessionRepository.update_status(db, session_id, "failed")
             
-            log_create = WorkflowLogCreate(
-                node_name="system",
-                status="failed",
-                execution_time_seconds=0.0,
-                message=f"System failure: {str(e)}"
-            )
-            await WorkflowLogRepository.create(db, session_id, log_create)
+            # Rollback the failed session to clean up its state
+            try:
+                await db.rollback()
+            except Exception:
+                pass
+                
+            # Create a fresh database session for recording the failure to prevent "session in prepared state" error
+            from backend.app.database.connection import AsyncSessionLocal
+            async with AsyncSessionLocal() as error_db:
+                try:
+                    await SessionRepository.update_status(error_db, session_id, "failed")
+                    
+                    log_create = WorkflowLogCreate(
+                        node_name="system",
+                        status="failed",
+                        execution_time_seconds=0.0,
+                        message=f"System failure: {str(e)}"
+                    )
+                    await WorkflowLogRepository.create(error_db, session_id, log_create)
+                except Exception as db_err:
+                    logger.error(f"[WorkflowService] Could not write failure status to DB: {db_err}")
             
             error_payload = {
                 "node": "failed",

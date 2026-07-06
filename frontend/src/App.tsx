@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   Sparkles, 
   RefreshCw, 
@@ -25,6 +25,9 @@ function App() {
   const [streamMetrics, setStreamMetrics] = useState<Record<string, number>>({});
   const [streamRetryCount, setStreamRetryCount] = useState(0);
   const [streamQualityScore, setStreamQualityScore] = useState(0.0);
+
+  const eventSourceRef = useRef<EventSource | null>(null);
+  const connectedSessionIdRef = useRef<string | null>(null);
 
   // Fetch session list
   const fetchSessions = async () => {
@@ -62,28 +65,26 @@ function App() {
     }
   }, [activeSessionId]);
 
-  // SSE streaming listener
-  useEffect(() => {
-    if (!activeSession) return;
-    
-    const isRunning = [
-      'planning', 
-      'researching', 
-      'analyzing', 
-      'quality_check', 
-      'report_generation'
-    ].includes(activeSession.status);
+  // Connect to SSE stream helper
+  const connectSSE = (sessionId: string) => {
+    if (eventSourceRef.current && connectedSessionIdRef.current === sessionId) {
+      return;
+    }
 
-    if (!isRunning) return;
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+    }
 
     // Reset stream state
     setStreamMetrics({});
     setStreamRetryCount(0);
     setStreamQualityScore(0.0);
 
-    const sseUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/workflow/${activeSession.id}/stream`;
+    const sseUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/workflow/${sessionId}/stream`;
     console.log(`Connecting to SSE Stream: ${sseUrl}`);
     const eventSource = new EventSource(sseUrl);
+    eventSourceRef.current = eventSource;
+    connectedSessionIdRef.current = sessionId;
 
     eventSource.onmessage = (event) => {
       try {
@@ -97,7 +98,7 @@ function App() {
 
         // Update main session status list to animate step transitions
         setSessions(prev => prev.map(s => {
-          if (s.id === activeSession.id) {
+          if (s.id === sessionId) {
             // Map event nodes to DB statuses
             const statusMap: Record<string, string> = {
               planner: 'planning',
@@ -130,9 +131,13 @@ function App() {
         if (data.node === 'completed' || data.node === 'failed') {
           console.log('SSE Stream finished.');
           eventSource.close();
+          if (eventSourceRef.current === eventSource) {
+            eventSourceRef.current = null;
+            connectedSessionIdRef.current = null;
+          }
           // Reload all lists and load finalized reports
           fetchSessions();
-          fetchSessionDetails(activeSession.id);
+          fetchSessionDetails(sessionId);
         }
       } catch (err) {
         console.error('Error parsing SSE event:', err);
@@ -142,16 +147,72 @@ function App() {
     eventSource.onerror = (err) => {
       console.error('SSE connection error:', err);
       eventSource.close();
+      if (eventSourceRef.current === eventSource) {
+        eventSourceRef.current = null;
+        connectedSessionIdRef.current = null;
+      }
       // Flag session as failed
-      setSessions(prev => prev.map(s => s.id === activeSession.id ? { ...s, status: 'failed' } : s));
+      setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, status: 'failed' } : s));
       setActiveSession(prev => prev ? { ...prev, status: 'failed' } : null);
     };
+  };
+
+  // SSE stream lifecycle manager
+  useEffect(() => {
+    if (!activeSession) {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+        connectedSessionIdRef.current = null;
+      }
+      return;
+    }
+    
+    const isRunning = [
+      'planning', 
+      'researching', 
+      'analyzing', 
+      'quality_check', 
+      'report_generation'
+    ].includes(activeSession.status);
+
+    if (!isRunning) {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+        connectedSessionIdRef.current = null;
+      }
+      return;
+    }
+
+    connectSSE(activeSession.id);
 
     return () => {
-      console.log('Closing EventSource connection');
-      eventSource.close();
+      // Clean up connection when the active session changes or component unmounts
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+        connectedSessionIdRef.current = null;
+      }
     };
-  }, [activeSessionId, activeSession?.status]);
+  }, [activeSessionId]);
+
+  // Secondary effect to start SSE connection when status changes to running
+  useEffect(() => {
+    if (!activeSession) return;
+
+    const isRunning = [
+      'planning', 
+      'researching', 
+      'analyzing', 
+      'quality_check', 
+      'report_generation'
+    ].includes(activeSession.status);
+
+    if (isRunning && !eventSourceRef.current) {
+      connectSSE(activeSession.id);
+    }
+  }, [activeSession?.status]);
 
   const handleSelectSession = (id: string) => {
     setActiveSessionId(id);
