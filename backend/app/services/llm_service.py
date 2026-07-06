@@ -186,19 +186,35 @@ Position our team as consultants that can help {company_name} build high-reliabi
                 
             uq_lower = user_question.lower()
             
+            # Sub-heuristics to return section-specific mock answers
+            if any(x in uq_lower for x in ["product", "service", "saas", "platform"]):
+                return f"According to the research report, {company_name} offers:\n- Core SaaS Platform: Unified lead scoring workspace dashboard.\n- AI Assistant Plug-ins: Browser extensions/APIs for content synthesis.\n- Enterprise Integrations: Connectors with Salesforce, HubSpot, and Slack."
+                
+            elif any(x in uq_lower for x in ["risk", "challenge", "threat"]):
+                return f"The primary risks identified in the report for {company_name} are:\n- High dependency on third-party foundational LLM providers.\n- Intense competition from rapid releases of similar AI wrappers.\n- Compliance with global data privacy laws (GDPR, CCPA) regarding scraped customer data."
+                
+            elif any(x in uq_lower for x in ["customer", "buyer", "user", "audience"]):
+                return f"The target customers for {company_name} are:\n- Sales Operations Teams looking to optimize sales lead preparations.\n- Business Intelligence Developers needing lead interaction analytic APIs.\n- SaaS Directors seeking custom AI integration pipelines."
+                
+            elif any(x in uq_lower for x in ["signal", "partnership", "expansion", "growth"]):
+                return f"The business signals for {company_name} include:\n- Goal to double engineering headcount this year.\n- Technical collaboration with Google Cloud.\n- Solid market reception with high ratings on leading review platforms."
+                
+            elif any(x in uq_lower for x in ["question", "discovery"]):
+                return f"Suggested discovery questions for {company_name}:\n1. How do you handle data privacy when using external LLM models?\n2. What are your biggest lead preparation bottlenecks?\n3. Are you planning proprietary model layers or relying on external APIs?"
+                
+            elif any(x in uq_lower for x in ["outreach", "strategy"]):
+                return f"Outreach strategy for {company_name}:\nPosition as consultants that can help build high-reliability failover middleware to mitigate third-party API dependency risks. Offer custom SOC2 compliance engineering."
+                
+            elif any(x in uq_lower for x in ["unknown", "missing"]):
+                return f"Unknown elements in the report for {company_name}:\n- Exact profitability margins and CAC.\n- Detailed roadmap on proprietary model developments."
+                
+            elif any(x in uq_lower for x in ["source", "citation"]):
+                return f"Sources used for the report:\n- Official Website: Overview & Product details.\n- Press releases regarding engineering expansion.\n- G2 Crowd reviews on operational AI platforms."
+            
             # Allowed topics (greetings, general query, or terms matching the mock report)
             greetings = ["hi", "hello", "hey", "greetings", "howdy", "hola", "summary", "overview", "report", "tell me about"]
-            allowed_keywords = [
-                "product", "products", "service", "services", "saas", "platform",
-                "risk", "risks", "challenge", "challenges", "threat", "threats",
-                "customer", "customers", "buyer", "buyers", "user", "users", "audience",
-                "question", "questions", "discovery", "outreach", "strategy", "strategies",
-                "overview", "about", "signal", "signals", "business signal", "business signals",
-                "partnership", "expansion", "growth", "unknown", "unknowns", "unknown data",
-                "missing data", "source", "sources", "citation", "citations", company_name.lower()
-            ]
+            allowed_keywords = ["about", company_name.lower()]
             
-            # Check if user question relates to report content or is a greeting
             is_greeting = any(g in uq_lower for g in greetings)
             is_about_report = any(kw in uq_lower for kw in allowed_keywords)
             
