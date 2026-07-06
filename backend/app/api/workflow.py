@@ -21,10 +21,10 @@ async def start_workflow(session_id: str, db: AsyncSession = Depends(get_db)):
     return {"message": "Workflow started successfully", "session_id": session_id}
 
 @router.get("/{session_id}/stream")
-async def stream_workflow_progress(session_id: str, db: AsyncSession = Depends(get_db)):
+async def stream_workflow_progress(session_id: str):
     """Runs the LangGraph research workflow and streams progress events using SSE."""
     logger.info(f"[Workflow Router] Opening progress stream for: {session_id}")
     
     # Delegating to WorkflowService
-    event_generator = WorkflowService.run_workflow_stream(db, session_id)
+    event_generator = WorkflowService.run_workflow_stream(session_id)
     return StreamingResponse(event_generator, media_type="text/event-stream")
