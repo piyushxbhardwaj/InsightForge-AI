@@ -62,6 +62,7 @@ export const apiService = {
   // Send a chat follow-up query
   sendChatMessage: async (sessionId: string, message: string): Promise<ChatMessage> => {
     const response = await api.post<ChatMessage>(`/chat/${sessionId}`, {
+      role: 'user',
       content: message,
     });
     return response.data;
