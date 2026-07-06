@@ -188,7 +188,15 @@ Position our team as consultants that can help {company_name} build high-reliabi
             
             # Allowed topics (greetings, general query, or terms matching the mock report)
             greetings = ["hi", "hello", "hey", "greetings", "howdy", "hola", "summary", "overview", "report", "tell me about"]
-            allowed_keywords = ["product", "service", "saas", "risk", "challenge", "threat", "customer", "buyer", "user", "audience", "question", "discovery", "outreach", "strategy", "overview", "about", company_name.lower()]
+            allowed_keywords = [
+                "product", "products", "service", "services", "saas", "platform",
+                "risk", "risks", "challenge", "challenges", "threat", "threats",
+                "customer", "customers", "buyer", "buyers", "user", "users", "audience",
+                "question", "questions", "discovery", "outreach", "strategy", "strategies",
+                "overview", "about", "signal", "signals", "business signal", "business signals",
+                "partnership", "expansion", "growth", "unknown", "unknowns", "unknown data",
+                "missing data", "source", "sources", "citation", "citations", company_name.lower()
+            ]
             
             # Check if user question relates to report content or is a greeting
             is_greeting = any(g in uq_lower for g in greetings)
