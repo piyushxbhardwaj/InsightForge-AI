@@ -87,6 +87,15 @@ class LLMService:
             if "research the company:" in line.lower() or "target company:" in line.lower():
                 company_name = line.split(":")[-1].strip()
                 break
+            elif "research report:" in line.lower():
+                company_name = line.replace("#", "").split(":")[-1].strip()
+                break
+            elif '"company_name":' in line.lower():
+                import re
+                match = re.search(r'"company_name"\s*:\s*"([^"]+)"', line)
+                if match:
+                    company_name = match.group(1)
+                    break
 
         if category == "planner":
             return f"""- {company_name} business model and value proposition
@@ -162,8 +171,32 @@ Position our team as consultants that can help {company_name} build high-reliabi
 """
 
         elif category == "chat":
+            # Extract user question from prompt
+            user_question = ""
+            lines = prompt.split("\n")
+            for i, line in enumerate(lines):
+                if "user question:" in line.lower():
+                    if i + 1 < len(lines):
+                        user_question = lines[i + 1].strip()
+                    break
+            
+            # Default to checking if the prompt has empty context
             if "{}" in prompt or "Context:\n{}" in prompt or "empty" in prompt.lower() or "budget" in prompt.lower():
                 return "This information is not available in the current research report."
-            return f"Based on the research report, {company_name} specializes in enterprise SaaS solutions, AI assistant plug-ins, and integrations. Their primary risks include dependencies on third-party APIs and compliance with evolving global data privacy laws."
+                
+            uq_lower = user_question.lower()
+            
+            # Allowed topics (greetings, general query, or terms matching the mock report)
+            greetings = ["hi", "hello", "hey", "greetings", "howdy", "hola", "summary", "overview", "report", "tell me about"]
+            allowed_keywords = ["product", "service", "saas", "risk", "challenge", "threat", "customer", "buyer", "user", "audience", "question", "discovery", "outreach", "strategy", "overview", "about", company_name.lower()]
+            
+            # Check if user question relates to report content or is a greeting
+            is_greeting = any(g in uq_lower for g in greetings)
+            is_about_report = any(kw in uq_lower for kw in allowed_keywords)
+            
+            if is_greeting or is_about_report:
+                return f"Based on the research report, {company_name} specializes in enterprise SaaS solutions, AI assistant plug-ins, and integrations. Their primary risks include dependencies on third-party APIs and compliance with evolving global data privacy laws."
+            
+            return "This information is not available in the current research report."
 
         return f"This is a mock response for {company_name}."
