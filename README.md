@@ -158,7 +158,8 @@ OPENAI_API_KEY=your_openai_api_key_here
 TAVILY_API_KEY=your_tavily_api_key_here
 ```
 
-*Note: If no valid keys are supplied, the application automatically triggers **Mock mode**, generating mock responses to allow full system evaluation.*
+> [!NOTE]
+> **Mock Mode:** If no LLM API keys are configured, InsightForge AI automatically runs in Mock Mode. This demonstrates the complete LangGraph workflow, report generation, and context-aware follow-up chat using deterministic mock responses, making the application fully evaluable without external API dependencies.
 
 ---
 
