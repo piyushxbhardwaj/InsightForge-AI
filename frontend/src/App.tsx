@@ -81,7 +81,7 @@ function App() {
     setStreamRetryCount(0);
     setStreamQualityScore(0.0);
 
-    const sseUrl = `http://localhost:8000/api/workflow/${activeSession.id}/stream`;
+    const sseUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/workflow/${activeSession.id}/stream`;
     console.log(`Connecting to SSE Stream: ${sseUrl}`);
     const eventSource = new EventSource(sseUrl);
 
